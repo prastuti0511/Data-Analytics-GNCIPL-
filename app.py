@@ -2,19 +2,11 @@ import streamlit as st
 import pandas as pd
 import os
 
-# --------------------------------------------------
-# PAGE CONFIGURATION
-# --------------------------------------------------
-
 st.set_page_config(
     page_title="GNCIPL Data Analytics Internship",
     page_icon="📊",
     layout="wide"
 )
-
-# --------------------------------------------------
-# PROJECT INFORMATION
-# --------------------------------------------------
 
 projects = {
     "Week 1": {
@@ -23,35 +15,30 @@ projects = {
         "excel": "GNCIPL WEEK 1 EXCEL(2).xlsx",
         "powerbi": "GNCIPL WEEK 1 POWER BI(1).pbix"
     },
-
     "Week 2": {
         "title": "Software Bug Tracker Analysis",
         "description": "Analysis of software bugs based on severity, priority, type, status, resolution time and modules.",
         "excel": "GNCIPL WEEK 2 EXCEL(1).xlsx",
         "powerbi": "GNCIPL WEEK 2 POWER BI(1).pbix"
     },
-
     "Week 3": {
         "title": "Climate Change – Glacier Ice-Melt Analysis",
         "description": "Analysis of glacier ice cover, ice loss, melt rate, temperature and climate risk.",
         "excel": "GNCIPL WEEK 3 EXCEL(1).xlsx",
         "powerbi": "GNCIPL WEEK 3 POWER BI(1).pbix"
     },
-
     "Week 4": {
         "title": "Water Consumption Dashboard",
         "description": "Analysis of water consumption, rainfall, population, groundwater extraction and regional trends.",
         "excel": "GNCIPL WEEK 4 EXCEL(1).xlsx",
         "powerbi": "GNCIPL WEEK 4 POWER BI(1).pbix"
     },
-
     "Week 5": {
         "title": "AI-Enhanced Robotics Data Analytics",
         "description": "Analysis of robot productivity, AI detection accuracy, efficiency, downtime, maintenance, energy and cost savings.",
         "excel": "GNCIPL WEEK 5 EXCEL(1).xlsx",
         "powerbi": "GNCIPL WEEK 5 POWER BI(1).pbix"
     },
-
     "Week 6": {
         "title": "Employment Data Analysis and Skill Gap Identification",
         "description": "Analysis of employment trends, workforce distribution, employability, skill gaps and training requirements.",
@@ -60,12 +47,7 @@ projects = {
     }
 }
 
-# --------------------------------------------------
-# HEADER
-# --------------------------------------------------
-
 st.title("📊 GNCIPL Data Analytics Internship")
-
 st.subheader("Six-Week Data Analytics Portfolio")
 
 st.write(
@@ -75,195 +57,115 @@ st.write(
 
 st.divider()
 
-# --------------------------------------------------
-# SIDEBAR
-# --------------------------------------------------
-
-st.sidebar.title("📁 Internship Projects")
-
 selected_week = st.sidebar.selectbox(
-    "Select a Week",
+    "📁 Select Internship Week",
     list(projects.keys())
 )
 
 project = projects[selected_week]
 
-# --------------------------------------------------
-# PROJECT INFORMATION
-# --------------------------------------------------
-
 st.header(f"{selected_week}: {project['title']}")
-
 st.write(project["description"])
 
 st.divider()
 
-# --------------------------------------------------
-# FILE PATHS
-# --------------------------------------------------
-
-excel_path = project["excel"]
-powerbi_path = project["powerbi"]
-
-# --------------------------------------------------
-# DOWNLOAD SECTION
-# --------------------------------------------------
-
+# FILE DOWNLOADS
 col1, col2 = st.columns(2)
 
-# --------------------------------------------------
-# EXCEL DOWNLOAD
-# --------------------------------------------------
-
 with col1:
-
     st.subheader("📗 Excel Dataset")
 
-    if os.path.exists(excel_path):
-
-        with open(excel_path, "rb") as file:
-
+    if os.path.exists(project["excel"]):
+        with open(project["excel"], "rb") as file:
             st.download_button(
-                label="⬇️ Download Excel File",
-                data=file,
-                file_name=excel_path,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                width="stretch"
+                "⬇️ Download Excel File",
+                file,
+                file_name=project["excel"],
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-
     else:
-
-        st.error(
-            f"Excel file not found: {excel_path}"
-        )
-
-# --------------------------------------------------
-# POWER BI DOWNLOAD
-# --------------------------------------------------
+        st.error("Excel file not found.")
 
 with col2:
-
     st.subheader("📊 Power BI Dashboard")
 
-    if os.path.exists(powerbi_path):
-
-        with open(powerbi_path, "rb") as file:
-
+    if os.path.exists(project["powerbi"]):
+        with open(project["powerbi"], "rb") as file:
             st.download_button(
-                label="⬇️ Download Power BI File",
-                data=file,
-                file_name=powerbi_path,
-                mime="application/octet-stream",
-                width="stretch"
+                "⬇️ Download Power BI File",
+                file,
+                file_name=project["powerbi"],
+                mime="application/octet-stream"
             )
-
     else:
-
-        st.error(
-            f"Power BI file not found: {powerbi_path}"
-        )
-
-# --------------------------------------------------
-# EXCEL PREVIEW
-# --------------------------------------------------
+        st.error("Power BI file not found.")
 
 st.divider()
 
+# EXCEL PREVIEW
 st.header("📋 Excel Data Preview")
 
-if os.path.exists(excel_path):
+if os.path.exists(project["excel"]):
 
     try:
+        excel_file = pd.ExcelFile(project["excel"])
 
-        # Read Excel workbook
-        excel_file = pd.ExcelFile(excel_path)
+        sheets = excel_file.sheet_names
 
-        # Get worksheet names
-        sheet_names = excel_file.sheet_names
+        if len(sheets) > 0:
 
-        # Worksheet selector
-        selected_sheet = st.selectbox(
-            "Select Worksheet",
-            sheet_names
-        )
-
-        # Read selected worksheet
-        df = pd.read_excel(
-            excel_path,
-            sheet_name=selected_sheet
-        )
-
-        # Display row and column counts
-        col1, col2 = st.columns(2)
-
-        with col1:
-
-            st.metric(
-                "Number of Rows",
-                df.shape[0]
+            selected_sheet = st.selectbox(
+                "Select Worksheet",
+                sheets
             )
 
-        with col2:
+            try:
+                df = pd.read_excel(
+                    project["excel"],
+                    sheet_name=selected_sheet
+                )
 
-            st.metric(
-                "Number of Columns",
-                df.shape[1]
-            )
+                st.write(
+                    f"**Rows:** {df.shape[0]} | "
+                    f"**Columns:** {df.shape[1]}"
+                )
 
-        # --------------------------------------------------
-        # FIX FOR STREAMLIT / PYARROW MIXED DATA TYPES
-        # --------------------------------------------------
+                # Convert everything to text to avoid
+                # Streamlit dataframe serialization errors
+                df = df.astype(str)
 
-        display_df = df.copy()
+                st.dataframe(
+                    df,
+                    width="stretch"
+                )
 
-        for column in display_df.columns:
+            except Exception as e:
+                st.warning(
+                    "The Excel file is available for download, "
+                    "but its preview could not be displayed."
+                )
 
-            display_df[column] = display_df[column].astype(str)
+        else:
+            st.info("No worksheets were found.")
 
-        # Display dataframe
-        st.dataframe(
-            display_df,
-            width="stretch"
-        )
-
-    except Exception as e:
-
+    except Exception:
         st.warning(
-            f"Excel preview could not be displayed: {e}"
+            "The Excel file is available for download, "
+            "but the preview is unavailable."
         )
 
 else:
-
-    st.info(
-        "The Excel file is not available for preview."
-    )
-
-# --------------------------------------------------
-# INTERNSHIP PROJECT SUMMARY
-# --------------------------------------------------
+    st.info("Excel file is not available.")
 
 st.divider()
 
+# SUMMARY
 st.header("📚 Six-Week Internship Projects")
 
-summary = {
-    "Week 1": "Nutrition Analysis of McDonald’s Menu",
-    "Week 2": "Software Bug Tracker Analysis",
-    "Week 3": "Climate Change – Glacier Ice-Melt Analysis",
-    "Week 4": "Water Consumption Dashboard",
-    "Week 5": "AI-Enhanced Robotics Data Analytics",
-    "Week 6": "Employment Data Analysis and Skill Gap Identification"
-}
-
-for week, title in summary.items():
-
+for week, details in projects.items():
     st.markdown(
-        f"**{week}:** {title}"
+        f"**{week}:** {details['title']}"
     )
-
-# --------------------------------------------------
-# FOOTER
-# --------------------------------------------------
 
 st.divider()
 
