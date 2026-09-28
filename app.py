@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 
 st.set_page_config(
     page_title="GNCIPL Data Analytics Internship",
@@ -7,42 +6,44 @@ st.set_page_config(
     layout="wide"
 )
 
+GITHUB_BASE = "https://github.com/prastuti0511/Data-Analytics-GNCIPL-/blob/main/"
+
 projects = {
     "Week 1": {
         "title": "Nutrition Analysis of McDonald’s Menu",
         "description": "Analysis of calories, protein, fat, carbohydrates, sugar and sodium across McDonald’s menu items.",
-        "excel": "GNCIPL WEEK 1 EXCEL(2).xlsx",
-        "powerbi": "GNCIPL WEEK 1 POWER BI(1).pbix"
+        "excel": "GNCIPL%20WEEK%201%20EXCEL%282%29.xlsx",
+        "powerbi": "GNCIPL%20WEEK%201%20POWER%20BI%281%29.pbix"
     },
     "Week 2": {
         "title": "Software Bug Tracker Analysis",
         "description": "Analysis of software bugs based on severity, priority, type, status, resolution time and modules.",
-        "excel": "GNCIPL WEEK 2 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 2 POWER BI(1).pbix"
+        "excel": "GNCIPL%20WEEK%202%20EXCEL%281%29.xlsx",
+        "powerbi": "GNCIPL%20WEEK%202%20POWER%20BI%281%29.pbix"
     },
     "Week 3": {
         "title": "Climate Change – Glacier Ice-Melt Analysis",
         "description": "Analysis of glacier ice cover, ice loss, melt rate, temperature and climate risk.",
-        "excel": "GNCIPL WEEK 3 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 3 POWER BI(1).pbix"
+        "excel": "GNCIPL%20WEEK%203%20EXCEL%281%29.xlsx",
+        "powerbi": "GNCIPL%20WEEK%203%20POWER%20BI%281%29.pbix"
     },
     "Week 4": {
         "title": "Water Consumption Dashboard",
         "description": "Analysis of water consumption, rainfall, population, groundwater extraction and regional trends.",
-        "excel": "GNCIPL WEEK 4 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 4 POWER BI(1).pbix"
+        "excel": "GNCIPL%20WEEK%204%20EXCEL%281%29.xlsx",
+        "powerbi": "GNCIPL%20WEEK%204%20POWER%20BI%281%29.pbix"
     },
     "Week 5": {
         "title": "AI-Enhanced Robotics Data Analytics",
         "description": "Analysis of robot productivity, AI detection accuracy, efficiency, downtime, maintenance, energy and cost savings.",
-        "excel": "GNCIPL WEEK 5 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 5 POWER BI(1).pbix"
+        "excel": "GNCIPL%20WEEK%205%20EXCEL%281%29.xlsx",
+        "powerbi": "GNCIPL%20WEEK%205%20POWER%20BI%281%29.pbix"
     },
     "Week 6": {
         "title": "Employment Data Analysis and Skill Gap Identification",
         "description": "Analysis of employment trends, workforce distribution, employability, skill gaps and training requirements.",
-        "excel": "GNCIPL WEEK 6 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 6 POWER BI(1).pbix"
+        "excel": "GNCIPL%20WEEK%206%20EXCEL%281%29.xlsx",
+        "powerbi": "GNCIPL%20WEEK%206%20POWER%20BI%281%29.pbix"
     }
 }
 
@@ -68,35 +69,23 @@ st.write(project["description"])
 
 st.divider()
 
-col1, col2 = st.columns(2)
+st.subheader("📗 Excel Dataset")
 
-with col1:
-    st.subheader("📗 Excel Dataset")
+excel_url = GITHUB_BASE + project["excel"]
 
-    if os.path.exists(project["excel"]):
-        with open(project["excel"], "rb") as file:
-            st.download_button(
-                label="⬇️ Download Excel File",
-                data=file.read(),
-                file_name=project["excel"],
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-    else:
-        st.error("Excel file not found.")
+st.link_button(
+    "⬇️ Open / Download Excel File",
+    excel_url
+)
 
-with col2:
-    st.subheader("📊 Power BI Dashboard")
+st.subheader("📊 Power BI Dashboard")
 
-    if os.path.exists(project["powerbi"]):
-        with open(project["powerbi"], "rb") as file:
-            st.download_button(
-                label="⬇️ Download Power BI File",
-                data=file.read(),
-                file_name=project["powerbi"],
-                mime="application/octet-stream"
-            )
-    else:
-        st.error("Power BI file not found.")
+powerbi_url = GITHUB_BASE + project["powerbi"]
+
+st.link_button(
+    "⬇️ Open / Download Power BI File",
+    powerbi_url
+)
 
 st.divider()
 
@@ -108,7 +97,7 @@ for week, details in projects.items():
 st.divider()
 
 st.success(
-    "All internship Excel datasets and Power BI dashboards are available for download."
+    "All six internship projects are available through the links above."
 )
 
 st.caption(
