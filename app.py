@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import os
 
 st.set_page_config(
@@ -69,8 +68,6 @@ st.write(project["description"])
 
 st.divider()
 
-# DOWNLOAD FILES
-
 col1, col2 = st.columns(2)
 
 with col1:
@@ -79,8 +76,8 @@ with col1:
     if os.path.exists(project["excel"]):
         with open(project["excel"], "rb") as file:
             st.download_button(
-                "⬇️ Download Excel File",
-                file,
+                label="⬇️ Download Excel File",
+                data=file.read(),
                 file_name=project["excel"],
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
@@ -93,8 +90,8 @@ with col2:
     if os.path.exists(project["powerbi"]):
         with open(project["powerbi"], "rb") as file:
             st.download_button(
-                "⬇️ Download Power BI File",
-                file,
+                label="⬇️ Download Power BI File",
+                data=file.read(),
                 file_name=project["powerbi"],
                 mime="application/octet-stream"
             )
@@ -103,72 +100,16 @@ with col2:
 
 st.divider()
 
-# EXCEL PREVIEW
-
-st.header("📋 Excel Data Preview")
-
-if os.path.exists(project["excel"]):
-
-    try:
-        excel_file = pd.ExcelFile(project["excel"])
-
-        sheets = excel_file.sheet_names
-
-        if sheets:
-
-            selected_sheet = st.selectbox(
-                "Select Worksheet",
-                sheets
-            )
-
-            try:
-                df = pd.read_excel(
-                    project["excel"],
-                    sheet_name=selected_sheet
-                )
-
-                st.write(
-                    f"**Rows:** {df.shape[0]} | "
-                    f"**Columns:** {df.shape[1]}"
-                )
-
-                # Convert values to strings to prevent
-                # dataframe serialization errors
-                df = df.astype(str)
-
-                st.dataframe(
-                    df,
-                    width="stretch"
-                )
-
-            except Exception:
-                st.warning(
-                    "This Excel file is available for download, "
-                    "but its preview could not be displayed."
-                )
-
-        else:
-            st.info("No worksheets were found.")
-
-    except Exception:
-        st.warning(
-            "This Excel file is available for download, "
-            "but its preview could not be displayed."
-        )
-
-else:
-    st.info("Excel file is not available.")
-
-st.divider()
-
 st.header("📚 Six-Week Internship Projects")
 
 for week, details in projects.items():
-    st.markdown(
-        f"**{week}:** {details['title']}"
-    )
+    st.markdown(f"**{week}:** {details['title']}")
 
 st.divider()
+
+st.success(
+    "All internship Excel datasets and Power BI dashboards are available for download."
+)
 
 st.caption(
     "GNCIPL Data Analytics Internship | Excel & Power BI Portfolio"
