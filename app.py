@@ -1,117 +1,247 @@
-
 import streamlit as st
-from pathlib import Path
 import pandas as pd
+import os
+
+# --------------------------------------------------
+# PAGE CONFIGURATION
+# --------------------------------------------------
 
 st.set_page_config(
-    page_title="GNCIPL | Six-Week Data Analytics Internship",
+    page_title="GNCIPL Data Analytics Internship",
     page_icon="📊",
     layout="wide"
 )
 
-BASE = Path(__file__).parent / "data"
+# --------------------------------------------------
+# PROJECT INFORMATION
+# --------------------------------------------------
 
-PROJECTS = {
-    1: {
+projects = {
+    "Week 1": {
         "title": "Nutrition Analysis of McDonald’s Menu",
+        "description": "Analysis of calories, protein, fat, carbohydrates, sugar and sodium across McDonald’s menu items.",
         "excel": "GNCIPL WEEK 1 EXCEL(2).xlsx",
-        "powerbi": "GNCIPL WEEK 1 POWER BI(1).pbix",
-        "description": "Analysis of calories, protein, fat, carbohydrates, sugar and sodium across McDonald’s menu categories."
+        "powerbi": "GNCIPL WEEK 1 POWER BI(1).pbix"
     },
-    2: {
+
+    "Week 2": {
         "title": "Software Bug Tracker Analysis",
+        "description": "Analysis of software bugs based on severity, priority, type, status, resolution time and modules.",
         "excel": "GNCIPL WEEK 2 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 2 POWER BI(1).pbix",
-        "description": "Analysis of software bugs by severity, priority, type, status, module and resolution time."
+        "powerbi": "GNCIPL WEEK 2 POWER BI(1).pbix"
     },
-    3: {
+
+    "Week 3": {
         "title": "Climate Change – Glacier Ice-Melt Analysis",
+        "description": "Analysis of glacier ice cover, ice loss, melt rate, temperature and climate risk.",
         "excel": "GNCIPL WEEK 3 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 3 POWER BI(1).pbix",
-        "description": "Analysis of glacier ice cover, ice loss, melt rate, temperature and regional climate-risk indicators."
+        "powerbi": "GNCIPL WEEK 3 POWER BI(1).pbix"
     },
-    4: {
+
+    "Week 4": {
         "title": "Water Consumption Dashboard",
+        "description": "Analysis of water consumption, rainfall, population, groundwater extraction and regional trends.",
         "excel": "GNCIPL WEEK 4 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 4 POWER BI(1).pbix",
-        "description": "Analysis of water consumption, rainfall, per-capita usage and groundwater-related indicators."
+        "powerbi": "GNCIPL WEEK 4 POWER BI(1).pbix"
     },
-    5: {
+
+    "Week 5": {
         "title": "AI-Enhanced Robotics Data Analytics",
+        "description": "Analysis of robot productivity, AI detection accuracy, efficiency, downtime, maintenance, energy and cost savings.",
         "excel": "GNCIPL WEEK 5 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 5 POWER BI(1).pbix",
-        "description": "Analysis of robot productivity, AI detection accuracy, downtime, maintenance, energy and cost savings."
+        "powerbi": "GNCIPL WEEK 5 POWER BI(1).pbix"
     },
-    6: {
+
+    "Week 6": {
         "title": "Employment Data Analysis and Skill Gap Identification",
+        "description": "Analysis of employment trends, workforce distribution, employability, skill gaps and training requirements.",
         "excel": "GNCIPL WEEK 6 EXCEL(1).xlsx",
-        "powerbi": "GNCIPL WEEK 6 POWER BI(1).pbix",
-        "description": "Analysis of employment trends, employability, workforce distribution, skill gaps and training requirements."
-    },
+        "powerbi": "GNCIPL WEEK 6 POWER BI(1).pbix"
+    }
 }
 
-st.title("📊 GNCIPL — Six-Week Data Analytics Internship")
-st.caption("Interactive project portfolio | Excel datasets | Power BI dashboards")
+# --------------------------------------------------
+# HEADER
+# --------------------------------------------------
 
-with st.sidebar:
-    st.header("Projects")
-    week = st.radio(
-        "Select a week",
-        options=list(PROJECTS.keys()),
-        format_func=lambda x: f"Week {x} — {PROJECTS[x]['title']}"
+st.title("📊 GNCIPL Data Analytics Internship")
+
+st.subheader("Six-Week Data Analytics Portfolio")
+
+st.write(
+    "This application presents the Excel datasets and Power BI dashboards "
+    "developed during the six-week internship."
+)
+
+st.divider()
+
+# --------------------------------------------------
+# SIDEBAR
+# --------------------------------------------------
+
+st.sidebar.title("📁 Internship Projects")
+
+selected_week = st.sidebar.selectbox(
+    "Select a Week",
+    list(projects.keys())
+)
+
+project = projects[selected_week]
+
+# --------------------------------------------------
+# PROJECT INFORMATION
+# --------------------------------------------------
+
+st.header(f"{selected_week}: {project['title']}")
+
+st.write(project["description"])
+
+st.divider()
+
+# --------------------------------------------------
+# FILE PATHS
+# --------------------------------------------------
+
+excel_path = project["excel"]
+powerbi_path = project["powerbi"]
+
+# --------------------------------------------------
+# DOWNLOAD SECTION
+# --------------------------------------------------
+
+col1, col2 = st.columns(2)
+
+# Excel
+with col1:
+
+    st.subheader("📗 Excel Dataset")
+
+    if os.path.exists(excel_path):
+
+        with open(excel_path, "rb") as file:
+
+            st.download_button(
+                label="⬇️ Download Excel File",
+                data=file,
+                file_name=excel_path,
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
+
+    else:
+
+        st.error(
+            f"Excel file not found: {excel_path}"
+        )
+
+
+# Power BI
+with col2:
+
+    st.subheader("📊 Power BI Dashboard")
+
+    if os.path.exists(powerbi_path):
+
+        with open(powerbi_path, "rb") as file:
+
+            st.download_button(
+                label="⬇️ Download Power BI File",
+                data=file,
+                file_name=powerbi_path,
+                mime="application/octet-stream",
+                use_container_width=True
+            )
+
+    else:
+
+        st.error(
+            f"Power BI file not found: {powerbi_path}"
+        )
+
+# --------------------------------------------------
+# EXCEL PREVIEW
+# --------------------------------------------------
+
+st.divider()
+
+st.header("📋 Excel Data Preview")
+
+if os.path.exists(excel_path):
+
+    try:
+
+        excel_file = pd.ExcelFile(excel_path)
+
+        sheet_names = excel_file.sheet_names
+
+        selected_sheet = st.selectbox(
+            "Select Worksheet",
+            sheet_names
+        )
+
+        df = pd.read_excel(
+            excel_path,
+            sheet_name=selected_sheet
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "Number of Rows",
+                df.shape[0]
+            )
+
+        with col2:
+            st.metric(
+                "Number of Columns",
+                df.shape[1]
+            )
+
+        st.dataframe(
+            df,
+            use_container_width=True
+        )
+
+    except Exception as e:
+
+        st.warning(
+            f"Excel preview could not be displayed: {e}"
+        )
+
+else:
+
+    st.info(
+        "The Excel file is not available for preview."
     )
-    st.divider()
-    st.info("Use the download buttons to access the original Excel and Power BI files.")
 
-p = PROJECTS[week]
-excel_path = BASE / p["excel"]
-pbix_path = BASE / p["powerbi"]
-
-st.header(f"Week {week}: {p['title']}")
-st.write(p["description"])
-
-c1, c2 = st.columns(2)
-with c1:
-    with open(excel_path, "rb") as f:
-        st.download_button(
-            "⬇️ Download Excel Dataset",
-            data=f.read(),
-            file_name=p["excel"],
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True
-        )
-with c2:
-    with open(pbix_path, "rb") as f:
-        st.download_button(
-            "⬇️ Download Power BI Dashboard",
-            data=f.read(),
-            file_name=p["powerbi"],
-            mime="application/octet-stream",
-            use_container_width=True
-        )
+# --------------------------------------------------
+# INTERNSHIP PROJECT SUMMARY
+# --------------------------------------------------
 
 st.divider()
-st.subheader("Excel Dataset Preview")
 
-try:
-    sheets = pd.ExcelFile(excel_path).sheet_names
-    selected_sheet = st.selectbox("Select worksheet", sheets)
-    df = pd.read_excel(excel_path, sheet_name=selected_sheet)
+st.header("📚 Six-Week Internship Projects")
 
-    a, b, c = st.columns(3)
-    a.metric("Rows", f"{len(df):,}")
-    b.metric("Columns", f"{len(df.columns):,}")
-    c.metric("Worksheet", selected_sheet)
+summary = {
+    "Week 1": "Nutrition Analysis of McDonald’s Menu",
+    "Week 2": "Software Bug Tracker Analysis",
+    "Week 3": "Climate Change – Glacier Ice-Melt Analysis",
+    "Week 4": "Water Consumption Dashboard",
+    "Week 5": "AI-Enhanced Robotics Data Analytics",
+    "Week 6": "Employment Data Analysis and Skill Gap Identification"
+}
 
-    st.dataframe(df.head(100), use_container_width=True, height=420)
-except Exception as e:
-    st.warning(f"Excel preview could not be loaded: {e}")
+for week, title in summary.items():
+
+    st.markdown(f"**{week}:** {title}")
+
+# --------------------------------------------------
+# FOOTER
+# --------------------------------------------------
 
 st.divider()
-st.subheader("All Six Projects")
-cols = st.columns(3)
-for i, (w, info) in enumerate(PROJECTS.items()):
-    with cols[i % 3]:
-        st.markdown(f"**Week {w}**")
-        st.write(info["title"])
-        st.caption(info["description"])
+
+st.caption(
+    "GNCIPL Data Analytics Internship | Excel & Power BI Portfolio"
+)
