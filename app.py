@@ -111,7 +111,10 @@ powerbi_path = project["powerbi"]
 
 col1, col2 = st.columns(2)
 
-# Excel
+# --------------------------------------------------
+# EXCEL DOWNLOAD
+# --------------------------------------------------
+
 with col1:
 
     st.subheader("📗 Excel Dataset")
@@ -125,7 +128,7 @@ with col1:
                 data=file,
                 file_name=excel_path,
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True
+                width="stretch"
             )
 
     else:
@@ -134,8 +137,10 @@ with col1:
             f"Excel file not found: {excel_path}"
         )
 
+# --------------------------------------------------
+# POWER BI DOWNLOAD
+# --------------------------------------------------
 
-# Power BI
 with col2:
 
     st.subheader("📊 Power BI Dashboard")
@@ -149,7 +154,7 @@ with col2:
                 data=file,
                 file_name=powerbi_path,
                 mime="application/octet-stream",
-                use_container_width=True
+                width="stretch"
             )
 
     else:
@@ -170,37 +175,55 @@ if os.path.exists(excel_path):
 
     try:
 
+        # Read Excel workbook
         excel_file = pd.ExcelFile(excel_path)
 
+        # Get worksheet names
         sheet_names = excel_file.sheet_names
 
+        # Worksheet selector
         selected_sheet = st.selectbox(
             "Select Worksheet",
             sheet_names
         )
 
+        # Read selected worksheet
         df = pd.read_excel(
             excel_path,
             sheet_name=selected_sheet
         )
 
+        # Display row and column counts
         col1, col2 = st.columns(2)
 
         with col1:
+
             st.metric(
                 "Number of Rows",
                 df.shape[0]
             )
 
         with col2:
+
             st.metric(
                 "Number of Columns",
                 df.shape[1]
             )
 
+        # --------------------------------------------------
+        # FIX FOR STREAMLIT / PYARROW MIXED DATA TYPES
+        # --------------------------------------------------
+
+        display_df = df.copy()
+
+        for column in display_df.columns:
+
+            display_df[column] = display_df[column].astype(str)
+
+        # Display dataframe
         st.dataframe(
-            df,
-            use_container_width=True
+            display_df,
+            width="stretch"
         )
 
     except Exception as e:
@@ -234,7 +257,9 @@ summary = {
 
 for week, title in summary.items():
 
-    st.markdown(f"**{week}:** {title}")
+    st.markdown(
+        f"**{week}:** {title}"
+    )
 
 # --------------------------------------------------
 # FOOTER
